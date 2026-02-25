@@ -52,7 +52,8 @@ app.post("/signin", async (req, res) => {
 });
 
 app.post("/add-website", middleware, async (req, res) => {
-    const { url, userId } = req.body;
+    const { url } = req.body;
+    const userId = req.userId;
     const user = await prismaClient.user.findUnique({
         where: {
             id: userId,
@@ -79,7 +80,7 @@ app.post("/add-website", middleware, async (req, res) => {
 });
 
 app.get("/get-websites", middleware, async (req, res) => {
-    const { userId } = req.body;
+    const userId = req.userId;
     const user = await prismaClient.user.findUnique({
         where: {
             id: userId,
