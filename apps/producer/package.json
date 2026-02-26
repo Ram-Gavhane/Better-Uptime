@@ -1,18 +1,16 @@
 {
-  "name": "@repo/redisstreams",
+  "name": "producer",
   "module": "index.ts",
   "type": "module",
   "private": true,
-  "exports": {
-    ".": "./index.ts"
+  "dependencies": {
+    "@repo/db": "workspace:*",
+    "@repo/redisstreams": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
-  },
-  "dependencies": {
-    "redis": "^5.11.0"
   }
 }
