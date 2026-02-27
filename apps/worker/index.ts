@@ -1,12 +1,12 @@
 import prismaClient from "@repo/db";
 import { xAckBulk, xReadGroup } from "@repo/redisstreams";
 import axios from "axios";
-import { resolve } from "bun";
 
 type messageType = {
     id: string,
     url: string
 }
+
 
 async function main() {
     while (1) {
@@ -33,7 +33,7 @@ async function checkWebsiteHealth(website: messageType) {
                     websiteId: website.id,
                     status: "UP",
                     responseTimeMs: endTime - startTime,
-                    regionId: "USA"
+                    region: "US"
                 }
             })
             resolve();
@@ -44,7 +44,7 @@ async function checkWebsiteHealth(website: messageType) {
                     websiteId: website.id,
                     status: "DOWN",
                     responseTimeMs: endTime - startTime,
-                    regionId: "USA"
+                    region: "US"
                 }
             })
             resolve();
