@@ -29,12 +29,6 @@ model Website {
   user      User          @relation(fields: [userId], references: [id])
 }
 
-model Region {
-  id    String        @id @default(uuid())
-  name  REGION
-  ticks WebsiteTick[]
-}
-
 enum REGION {
   US
   EU
@@ -45,9 +39,8 @@ model WebsiteTick {
   id             String        @id @default(uuid())
   responseTimeMs Int
   status         WebsiteStatus
-  region         Region        @relation(fields: [regionId], references: [id])
+  region         REGION
   website        Website       @relation(fields: [websiteId], references: [id])
-  regionId       String
   websiteId      String
   createdAt      DateTime      @default(now())
 }
