@@ -8,7 +8,6 @@ async function main() {
             id: true,
         }
     });
-    console.log(websites);
 
     await xAddBulk(websites.map(website => ({
         url: website.url,
