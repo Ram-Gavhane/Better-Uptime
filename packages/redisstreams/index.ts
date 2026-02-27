@@ -14,15 +14,18 @@ type redisStreamResultType = {
     messages: {
         id: string;
         message: {
-            url: string;
-            id: string;
+            id: string,
+            url: string
         }
     }[]
 }
 
 type messageType = {
-    id: string;
-    url: string;
+    id: string,
+    message: {
+        id: string,
+        url: string
+    }
 }
 
 const STREAM_NAME = "better-uptime:website";
@@ -45,7 +48,8 @@ async function xReadGroup(consumerGroupId: string, workerId: string): Promise<me
     }
     )
     const messages = redisStreamResult as redisStreamResultType[] | undefined;
-    const result: messageType[] | undefined = messages?.[0]?.messages.map(message => message.message);
+    const result: messageType[] | undefined = messages?.[0]?.messages;
+    console.log(result);
     return result;
 }
 
