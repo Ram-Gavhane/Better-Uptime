@@ -30,6 +30,7 @@ type messageType = {
 
 const STREAM_NAME = "better-uptime:website";
 
+
 async function xAddBulk(websites: websiteData[]) {
     for (let i = 0; i < websites.length; i++) {
         await client.xAdd(STREAM_NAME, '*', {
