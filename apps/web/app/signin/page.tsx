@@ -35,7 +35,7 @@ export default function SigninPage() {
         localStorage.setItem("token", data.token);
       }
 
-      router.push("/");
+      router.push("/dashboard");
     } catch (err: any) {
       setError(err.message);
     } finally {
