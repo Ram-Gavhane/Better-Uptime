@@ -18,9 +18,14 @@ export default function Home() {
               <LucideGithub className="h-4 w-4" />
               GitHub
             </Link>
-            <button className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:scale-105 active:scale-95">
-              Get Started
-            </button>
+            <div className="flex items-center gap-4">
+              <Link href="/signin" className="text-sm font-medium opacity-60 transition-opacity hover:opacity-100">
+                Sign In
+              </Link>
+              <Link href="/signup" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:scale-105 active:scale-95">
+                Sign Up
+              </Link>
+            </div>
           </div>
         </div>
       </nav>
@@ -39,9 +44,9 @@ export default function Home() {
               The most reliable way to monitor your infrastructure. Beautiful status pages, lightning fast incident management, and automated on-call rotations.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <button className="h-12 w-full rounded-2xl bg-primary px-8 text-base font-bold text-primary-foreground transition-all hover:bg-slate-800 dark:hover:bg-slate-200 sm:w-auto">
+              <Link href="/signup" className="flex h-12 w-full items-center justify-center rounded-2xl bg-primary px-8 text-base font-bold text-primary-foreground transition-all hover:bg-slate-800 dark:hover:bg-slate-200 sm:w-auto">
                 Start Free Trial
-              </button>
+              </Link>
               <button className="h-12 w-full rounded-2xl border border-border bg-background px-8 text-base font-bold transition-all hover:bg-accent sm:w-auto">
                 Watch Demo
               </button>

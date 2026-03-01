@@ -3,9 +3,10 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "./config";
 import middleware from "./middleware";
+import cors from "cors";
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -14,6 +15,14 @@ app.get("/", (req, res) => {
 
 app.post("/signup", async (req, res) => {
     const { email, password } = req.body;
+    const user = await prismaClient.user.findUnique({
+        where: {
+            email,
+        },
+    });
+    if (user) {
+        return res.status(400).json({ message: "User associated with this email already exists" });
+    }
     try {
         const user = await prismaClient.user.create({
             data: {
