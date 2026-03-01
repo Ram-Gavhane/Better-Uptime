@@ -116,14 +116,53 @@ app.get("/website/:id", middleware, async (req, res) => {
             id
         },
     });
+
+    const latestTicks = await prismaClient.websiteTick.findMany({
+        where: {
+            websiteId: id
+        },
+        take: 10,
+        orderBy: {
+            createdAt: "desc"
+        }
+    });
     if (!website) {
         return res.status(404).json({ message: "Website not found" });
     }
     res.json({
         message: "Website fetched successfully",
-        website
+        website,
+        latestTicks
     });
 });
+
+app.delete("/website/:id", async (req, res) => {
+    const websiteId = req.params.id;
+    try {
+        const response = await prismaClient.websiteTick.deleteMany({
+            where: {
+                websiteId
+            }
+        })
+        if (!response) {
+            res.json({
+                message: "An error occured while deleting website try again"
+            })
+            return;
+        }
+        await prismaClient.website.delete({
+            where: {
+                id: websiteId
+            }
+        })
+        res.status(200).json({
+            message: "Webiste deleted successfully"
+        })
+    } catch (err) {
+        res.status(500).json(err)
+    }
+});
+
 
 app.listen(3001, () => {
     console.log("Server started on port 3001");

@@ -179,14 +179,13 @@ export default function DashboardPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <a 
-                            href={website.url} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 opacity-60 hover:opacity-100 hover:bg-zinc-200 transition-all dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                          <Link
+                            href={`/dashboard/website/${website.id}`}
+                            className="inline-flex h-8 items-center gap-2 rounded-full bg-zinc-100 px-3 text-xs font-semibold opacity-60 hover:opacity-100 hover:bg-zinc-200 transition-all dark:bg-zinc-800 dark:hover:bg-zinc-700"
                           >
-                            <LucideExternalLink className="h-4 w-4" />
-                          </a>
+                            Details
+                            <LucideExternalLink className="h-3 w-3" />
+                          </Link>
                         </td>
                       </tr>
                     ))}
