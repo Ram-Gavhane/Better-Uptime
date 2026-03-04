@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   LucideShieldCheck, 
-  LucidePlus, 
   LucideGlobe, 
   LucideLogOut, 
   LucideLoader2,
@@ -14,18 +13,18 @@ import {
   LucideAlertCircle
 } from "lucide-react";
 import axios from "axios";
+import { AddWebsiteModal } from "@/components/AddWebsiteModal";
 
 interface Website {
   id: string;
   url: string;
   status?: string;
+  regions?: string[];
 }
 
 export default function DashboardPage() {
   const [websites, setWebsites] = useState<Website[]>([]);
-  const [newUrl, setNewUrl] = useState("");
   const [loading, setLoading] = useState(true);
-  const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -49,25 +48,6 @@ export default function DashboardPage() {
       setError("Failed to fetch websites");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleAddWebsite = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAdding(true);
-    setError("");
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post("http://localhost:3001/add-website", 
-        { url: newUrl },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setNewUrl("");
-      fetchWebsites();
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to add website");
-    } finally {
-      setAdding(false);
     }
   };
 
@@ -104,34 +84,13 @@ export default function DashboardPage() {
 
       <main className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex flex-col gap-8">
-          {/* Header & Add Form */}
+          {/* Header & Add Modal */}
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between items-start">
             <div>
               <h1 className="text-3xl font-extrabold tracking-tight">Dashboard</h1>
               <p className="text-muted-foreground mt-1">Manage your monitored infrastructure.</p>
             </div>
-            
-            <form onSubmit={handleAddWebsite} className="flex w-full max-w-md items-center gap-2">
-              <div className="relative flex-1">
-                <LucideGlobe className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="url"
-                  placeholder="https://example.com"
-                  required
-                  className="flex h-10 w-full rounded-full border border-input bg-background pl-10 pr-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={newUrl}
-                  onChange={(e) => setNewUrl(e.target.value)}
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={adding}
-                className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
-              >
-                {adding ? <LucideLoader2 className="h-4 w-4 animate-spin" /> : <LucidePlus className="h-4 w-4" />}
-                Add Website
-              </button>
-            </form>
+            <AddWebsiteModal onSuccess={fetchWebsites} />
           </div>
 
           {error && (

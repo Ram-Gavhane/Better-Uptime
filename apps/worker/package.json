@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run index.ts"
+    "dev": "bun run index.ts",
+    "regionsTest": "REGION=US bun run index.ts && REGION=EU bun run index.ts && REGION=INDIA bun run index.ts"
   },
   "dependencies": {
     "@repo/db": "workspace:*",

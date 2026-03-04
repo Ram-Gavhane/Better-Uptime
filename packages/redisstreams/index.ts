@@ -1,4 +1,5 @@
 import { createClient } from 'redis';
+import { REGION as RegionEnum } from '@repo/db';
 
 const client = await createClient()
     .on('error', err => console.log('Redis Client Error', err))
@@ -7,6 +8,7 @@ const client = await createClient()
 type websiteData = {
     url: string;
     id: string;
+    regions: RegionEnum[];
 }
 
 type redisStreamResultType = {
@@ -15,7 +17,8 @@ type redisStreamResultType = {
         id: string;
         message: {
             id: string,
-            url: string
+            url: string,
+            region: RegionEnum
         }
     }[]
 }
@@ -24,7 +27,8 @@ type messageType = {
     id: string,
     message: {
         id: string,
-        url: string
+        url: string,
+        region: RegionEnum
     }
 }
 
@@ -33,10 +37,13 @@ const STREAM_NAME = "better-uptime:website";
 
 async function xAddBulk(websites: websiteData[]) {
     for (let i = 0; i < websites.length; i++) {
-        await client.xAdd(STREAM_NAME, '*', {
-            url: websites[i]!.url,
-            id: websites[i]!.id
-        })
+        for (let regions = 0; regions < websites[i]!.regions.length; regions++) {
+            await client.xAdd(STREAM_NAME, '*', {
+                url: websites[i]!.url,
+                id: websites[i]!.id,
+                region: websites[i]!.regions[regions] as string
+            })
+        }
     }
 }
 

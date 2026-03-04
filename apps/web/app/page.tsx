@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LucideShieldCheck, LucideZap, LucideClock, LucideMail, LucideBarChart3, LucideFileJson, LucideGithub } from "lucide-react";
+import { LucideShieldCheck, LucideZap, LucideClock, LucideMail, LucideBarChart3, LucideFileJson, LucideGithub, FileBoxIcon } from "lucide-react";
 
 export default function Home() {
   return (
@@ -18,8 +18,7 @@ export default function Home() {
               <LucideGithub className="h-4 w-4" />
               GitHub
             </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/signin" className="text-sm font-medium opacity-60 transition-opacity hover:opacity-100">
+             <div className="flex gap-3 items-center"><Link href="/signin" className="text-sm font-medium opacity-60 transition-opacity hover:opacity-100">
                 Sign In
               </Link>
               <Link href="/signup" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:scale-105 active:scale-95">

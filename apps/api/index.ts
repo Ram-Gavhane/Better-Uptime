@@ -61,7 +61,7 @@ app.post("/signin", async (req, res) => {
 });
 
 app.post("/add-website", middleware, async (req, res) => {
-    const { url } = req.body;
+    const { url, regions } = req.body;
     const userId = req.userId;
     const user = await prismaClient.user.findUnique({
         where: {
@@ -76,6 +76,7 @@ app.post("/add-website", middleware, async (req, res) => {
             data: {
                 url,
                 userId: userId,
+                regions
             },
         });
         res.json({
@@ -111,12 +112,11 @@ app.get("/get-websites", middleware, async (req, res) => {
 
 app.get("/website/:id", middleware, async (req, res) => {
     const id = req.params.id as string;
-    const website = await prismaClient.website.findUnique({
+    const website = await prismaClient.website.findFirst({
         where: {
             id
-        },
-    });
-
+        }
+    })
     const latestTicks = await prismaClient.websiteTick.findMany({
         where: {
             websiteId: id
@@ -126,9 +126,6 @@ app.get("/website/:id", middleware, async (req, res) => {
             createdAt: "desc"
         }
     });
-    if (!website) {
-        return res.status(404).json({ message: "Website not found" });
-    }
     res.json({
         message: "Website fetched successfully",
         website,

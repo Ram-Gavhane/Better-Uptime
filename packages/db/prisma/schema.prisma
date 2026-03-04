@@ -24,6 +24,7 @@ model Website {
   id        String        @id @default(uuid())
   url       String
   userId    String
+  regions   REGION[]
   timeAdded DateTime      @default(now())
   ticks     WebsiteTick[]
   user      User          @relation(fields: [userId], references: [id])

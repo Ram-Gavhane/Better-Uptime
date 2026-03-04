@@ -6,28 +6,32 @@ async function main() {
         select: {
             url: true,
             id: true,
+            regions: true,
         }
     });
 
     await xAddBulk(websites.map(website => ({
         url: website.url,
         id: website.id,
+        regions: website.regions,
     })));
 }
 
 async function createConsumerGroup() {
-    try {
-        const response = await client.xGroupCreate('better-uptime:website', 'USA', '$');
-        if (response === "OK") {
-            return;
-        } else {
-            console.log("Group already exists")
+    const groups = ['US', 'EU', 'INDIA'];
+    for (const group of groups) {
+        try {
+            await client.xGroupCreate('better-uptime:website', group, '$', { MKSTREAM: true });
+            console.log(`Group ${group} created`);
+        } catch (e: any) {
+            const errMsg = String(e);
+            if (errMsg.includes('BUSYGROUP')) {
+                console.log(`Group ${group} already exists, skipping`);
+            } else {
+                console.log(`Error creating group ${group}:`, e);
+            }
         }
-    } catch (e) {
-
     }
-
-
 }
 
 setInterval(() => {
