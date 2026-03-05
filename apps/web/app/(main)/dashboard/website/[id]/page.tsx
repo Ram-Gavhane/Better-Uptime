@@ -4,9 +4,7 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
-  LucideShieldCheck, 
   LucideArrowLeft, 
-  LucideGlobe, 
   LucideClock, 
   LucideMapPin,
   LucideCheckCircle2,
@@ -36,11 +34,12 @@ export default function WebsiteDetailsPage({ params }: { params: Promise<{ id: s
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
-
-  setInterval(function(){
-    window.location.reload()
-  }, 3* 60 * 1000);
+  const router = useRouter();  useEffect(() => {
+    const interval = setInterval(() => {
+      window.location.reload();
+    }, 3 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -105,18 +104,8 @@ export default function WebsiteDetailsPage({ params }: { params: Promise<{ id: s
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50/50 dark:bg-zinc-950">
-      <nav className="border-b border-border bg-background/70 backdrop-blur-md sticky top-0 z-50">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link href="/dashboard" className="flex items-center gap-2 text-xl font-bold tracking-tight">
-            <LucideShieldCheck className="h-6 w-6 text-primary" />
-            <span>Better Uptime</span>
-          </Link>
-          <div className="h-8 w-8 rounded-full bg-zinc-100 dark:bg-zinc-800" />
-        </div>
-      </nav>
-
-      <main className="mx-auto max-w-6xl px-6 py-12">
+    <>
+      <main className="mx-auto max-w-6xl px-6 py-6">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <Link 
@@ -203,6 +192,6 @@ export default function WebsiteDetailsPage({ params }: { params: Promise<{ id: s
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 }
