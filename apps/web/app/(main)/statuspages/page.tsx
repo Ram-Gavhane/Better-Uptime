@@ -8,7 +8,8 @@ import {
   LucideLoader2,
   LucideExternalLink,
   LucideAlertCircle,
-  LucidePresentation
+  LucidePresentation,
+  LucidePlus
 } from "lucide-react";
 import axios from "axios";
 import { AddWebsiteModal } from "@/components/AddWebsiteModal";
@@ -16,11 +17,17 @@ import { AddWebsiteModal } from "@/components/AddWebsiteModal";
 interface Website {
   id: string;
   url: string;
+  statusPage?: {
+    id: string;
+    title: string;
+    description: string;
+  };
 }
 
 export default function StatusPages() {
   const [websites, setWebsites] = useState<Website[]>([]);
   const [loading, setLoading] = useState(true);
+  const [requesting, setRequesting] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -45,6 +52,21 @@ export default function StatusPages() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreateStatusPage = async (websiteId: string) => {
+    setRequesting(true);
+    if (!confirm("Create a public status page for this website?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(`http://localhost:3001/website/${websiteId}/statuspage`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchWebsites(); // Refresh to get the new status page reference
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to create status page.");
+    }
+    setRequesting(false);
   };
 
   if (loading) {
@@ -106,15 +128,25 @@ export default function StatusPages() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <Link
-                            href={`/status/${website.id}`}
-                            target="_blank"
-                            className="inline-flex h-8 items-center gap-2 rounded-full bg-primary/10 px-3 text-xs font-semibold text-primary hover:bg-primary/20 transition-all"
-                          >
-                            <LucidePresentation className="h-3 w-3" />
-                            View Status Page
-                            <LucideExternalLink className="h-3 w-3 opacity-50" />
-                          </Link>
+                          {website.statusPage ? (
+                            <Link
+                              href={`/status/${website.id}`}
+                              target="_blank"
+                              className="inline-flex h-8 items-center gap-2 rounded-full bg-primary/10 px-3 text-xs font-semibold text-primary hover:bg-primary/20 transition-all"
+                            >
+                              <LucidePresentation className="h-3 w-3" />
+                              View Status Page
+                              <LucideExternalLink className="h-3 w-3 opacity-50" />
+                            </Link>
+                          ) : (
+                            <button
+                              onClick={() => handleCreateStatusPage(website.id)}
+                              className="inline-flex h-8 items-center gap-2 rounded-full border border-border bg-card px-3 text-xs font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                            >
+                              <LucidePlus className="h-3 w-3" />
+                              {requesting ? "Creating..." : "Create Status Page"}
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}

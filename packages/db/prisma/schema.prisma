@@ -21,13 +21,23 @@ model User {
 }
 
 model Website {
-  id        String        @id @default(uuid())
-  url       String
-  userId    String
-  regions   REGION[]
-  timeAdded DateTime      @default(now())
-  ticks     WebsiteTick[]
-  user      User          @relation(fields: [userId], references: [id])
+  id         String        @id @default(uuid())
+  url        String
+  userId     String
+  regions    REGION[]
+  timeAdded  DateTime      @default(now())
+  ticks      WebsiteTick[]
+  user       User          @relation(fields: [userId], references: [id])
+  statusPage StatusPage?
+}
+
+model StatusPage {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  websiteId   String   @unique
+  website     Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 }
 
 enum REGION {

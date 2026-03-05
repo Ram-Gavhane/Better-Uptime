@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarFooter
 } from "@/components/ui/sidebar";
-import { LucideShieldCheck, LucideGlobe, LucideLogOut } from "lucide-react";
+import { LucideShieldCheck, LucideGlobe, LucideLogOut, LucideActivity } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -52,7 +52,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Status Pages">
                   <Link href="/statuspages">
-                    <LucideGlobe className="h-4 w-4" />
+                  <LucideActivity className="h-4 w-4" />
                     <span>Status Pages</span>
                   </Link>
                 </SidebarMenuButton>

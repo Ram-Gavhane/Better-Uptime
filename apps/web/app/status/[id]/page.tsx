@@ -9,9 +9,11 @@ import {
   LucideXCircle,
   LucideLoader2,
   LucideAlertCircle,
-  LucideSearch
+  LucideSearch,
+  LucideActivity
 } from "lucide-react";
 import axios from "axios";
+import { UptimeBars } from "@/components/UptimeBars";
 
 interface Tick {
   id: string;
@@ -26,9 +28,16 @@ interface Website {
   url: string;
 }
 
+interface StatusPage {
+  id: string;
+  title: string;
+  description: string;
+  website: Website;
+}
+
 export default function PublicStatusPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [website, setWebsite] = useState<Website | null>(null);
+  const [statusPage, setStatusPage] = useState<StatusPage | null>(null);
   const [ticks, setTicks] = useState<Tick[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -48,11 +57,8 @@ export default function PublicStatusPage({ params }: { params: Promise<{ id: str
 
   const fetchDetails = async () => {
     try {
-      const token = localStorage.getItem("token"); // Fallback for the current API
-      const response = await axios.get(`http://localhost:3001/website/${id}`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-      setWebsite(response.data.website);
+      const response = await axios.get(`http://localhost:3001/statuspage/${id}`);
+      setStatusPage(response.data.statusPage);
       setTicks(response.data.latestTicks);
     } catch (err: any) {
       setError("Unable to load public status at this time.");
@@ -72,7 +78,7 @@ export default function PublicStatusPage({ params }: { params: Promise<{ id: str
     );
   }
 
-  if (error || !website) {
+  if (error || !statusPage) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-zinc-50 dark:bg-zinc-950 px-6 text-center">
         <div className="rounded-full bg-destructive/10 p-6">
@@ -81,7 +87,7 @@ export default function PublicStatusPage({ params }: { params: Promise<{ id: str
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Status Page Not Found</h1>
           <p className="text-muted-foreground mt-2 max-w-sm">
-            {error || "The website you are looking for does not exist or has been removed."}
+            {error || "The status page you are looking for does not exist or has been removed."}
           </p>
         </div>
       </div>
@@ -94,6 +100,17 @@ export default function PublicStatusPage({ params }: { params: Promise<{ id: str
 
   const isCurrentlyUp = ticks.length > 0 ? ticks[0].status === "UP" : true;
 
+  // Group ticks by region
+  const groupedTicks = ticks.reduce((acc, tick) => {
+    if (!acc[tick.region]) {
+      acc[tick.region] = [];
+    }
+    acc[tick.region].push({ status: tick.status, createdAt: tick.createdAt });
+    return acc;
+  }, {} as Record<string, { status: string; createdAt: string }[]>);
+
+  const activeRegions = Object.keys(groupedTicks).sort();
+
   return (
     <div className="min-h-screen bg-zinc-50/50 dark:bg-zinc-950">
       {/* Public Header */}
@@ -103,8 +120,8 @@ export default function PublicStatusPage({ params }: { params: Promise<{ id: str
             <LucideShieldCheck className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight">{website.url}</h1>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Public Status</p>
+            <h1 className="text-xl font-bold tracking-tight">{statusPage.title}</h1>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{statusPage.description}</p>
           </div>
         </div>
       </header>
@@ -121,7 +138,7 @@ export default function PublicStatusPage({ params }: { params: Promise<{ id: str
                 </div>
                 <div>
                   <h2 className="text-3xl font-extrabold text-emerald-900 dark:text-emerald-50">All Systems Operational</h2>
-                  <p className="mt-2 font-medium text-emerald-700/80 dark:text-emerald-200/60">We are currently not experiencing any issues with {website.url}.</p>
+                  <p className="mt-2 font-medium text-emerald-700/80 dark:text-emerald-200/60">We are currently not experiencing any issues with {statusPage.website.url}.</p>
                 </div>
               </>
             ) : (
@@ -131,7 +148,7 @@ export default function PublicStatusPage({ params }: { params: Promise<{ id: str
                 </div>
                 <div>
                   <h2 className="text-3xl font-extrabold text-destructive">Partial Outage Detected</h2>
-                  <p className="mt-2 font-medium text-destructive/80">We are currently experiencing connectivity issues with {website.url}.</p>
+                  <p className="mt-2 font-medium text-destructive/80">We are currently experiencing connectivity issues with {statusPage.website.url}.</p>
                 </div>
               </>
             )}
@@ -139,65 +156,44 @@ export default function PublicStatusPage({ params }: { params: Promise<{ id: str
 
           <div className="grid gap-6">
             <div className="flex items-end justify-between">
-              <h3 className="text-xl font-bold">Recent History</h3>
+              <h3 className="text-xl font-bold">Region Status</h3>
               <div className="text-sm font-medium">
-                Recent Uptime: <span className={recentUptime >= 99 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-500"}>{recentUptime}%</span>
+                Overall Uptime: <span className={recentUptime >= 99 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-500"}>{recentUptime}%</span>
               </div>
             </div>
 
-            <div className="rounded-3xl border border-border bg-card overflow-hidden shadow-sm">
-              {ticks.length === 0 ? (
+            <div className="rounded-2xl border border-border bg-card shadow-sm">
+              {activeRegions.length === 0 ? (
                 <div className="py-24 text-center">
                   <p className="text-muted-foreground">Monitoring just started. No data available yet.</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-border bg-zinc-50/50 dark:bg-zinc-900/50">
-                        <th className="px-6 py-4 font-bold">Status</th>
-                        <th className="px-6 py-4 font-bold">Response Time</th>
-                        <th className="px-6 py-4 font-bold">Region</th>
-                        <th className="px-6 py-4 font-bold text-right">Time</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {ticks.map((tick) => (
-                        <tr key={tick.id} className="transition-colors hover:bg-zinc-50/50 dark:hover:bg-zinc-900/10">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-2">
-                              {tick.status == "UP" ? (
-                                <>
-                                  <LucideCheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">Operational</span>
-                                </>
-                              ) : (
-                                <>
-                                  <LucideXCircle className="h-4 w-4 text-destructive" />
-                                  <span className="font-semibold text-destructive">Offline</span>
-                                </>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-2">
-                              <LucideClock className="h-4 w-4 opacity-40" />
-                              <span className="font-medium">{tick.responseTimeMs}ms</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-2">
-                              <LucideMapPin className="h-4 w-4 opacity-40" />
-                              <span className="capitalize">{tick.region}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-right text-muted-foreground">
-                            {new Date(tick.createdAt).toLocaleString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="flex flex-col">
+                  {activeRegions.map((region, index) => {
+                    const regionTicks = groupedTicks[region];
+                    const isRegionUp = regionTicks.length > 0 ? regionTicks[0].status === "UP" : true;
+                    
+                    return (
+                      <div 
+                        key={region} 
+                        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:px-6 ${index !== activeRegions.length - 1 ? "border-b border-border" : ""}`}
+                      >
+                        <div className="flex items-center gap-3 min-w-[150px]">
+                          <LucideActivity className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-semibold">{region}</span>
+                        </div>
+                        
+                        <div className="flex flex-1 items-center justify-between sm:justify-end gap-6 sm:gap-8">
+                          <span className={`text-sm font-medium ${isRegionUp ? "text-emerald-600 dark:text-emerald-400" : "text-amber-500"}`}>
+                            {isRegionUp ? "Operational" : "Degraded"}
+                          </span>
+                          
+                          {/* We render exactly 45 bars to fit nicely on mobile/desktop without wrapping visually, or 40. */}
+                          <UptimeBars ticks={regionTicks} maxBars={40} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>

@@ -103,6 +103,9 @@ app.get("/get-websites", middleware, async (req, res) => {
         where: {
             userId: userId,
         },
+        include: {
+            statusPage: true
+        }
     });
     res.json({
         message: "Websites fetched successfully",
@@ -157,6 +160,70 @@ app.delete("/website/:id", async (req, res) => {
         })
     } catch (err) {
         res.status(500).json(err)
+    }
+});
+
+app.post("/website/:id/statuspage", middleware, async (req, res) => {
+    const websiteId = req.params.id as string;
+    const { title, description } = req.body;
+
+    // Ensure website exists and belongs to user
+    const website = await prismaClient.website.findUnique({
+        where: { id: websiteId }
+    });
+
+    if (!website || website.userId !== req.userId) {
+        return res.status(403).json({ message: "Unauthorized or website not found" });
+    }
+
+    try {
+        const statusPage = await prismaClient.statusPage.create({
+            data: {
+                title: title || `${website.url} Status`,
+                description: description || `Real-time status for ${website.url}`,
+                websiteId
+            }
+        });
+        res.json({
+            message: "Status page created successfully",
+            statusPage
+        });
+    } catch (error: any) {
+        console.error(error);
+        if (error.code === 'P2002') {
+            return res.status(400).json({ message: "Status page already exists for this website" });
+        }
+        res.status(500).json({ message: "Failed to create status page" });
+    }
+});
+
+app.get("/statuspage/:websiteId", async (req, res) => {
+    const websiteId = req.params.websiteId as string;
+    try {
+        const statusPage = await prismaClient.statusPage.findUnique({
+            where: { websiteId },
+            include: {
+                website: true
+            }
+        });
+
+        if (!statusPage) {
+            return res.status(404).json({ message: "Status page not found" });
+        }
+
+        const latestTicks = await prismaClient.websiteTick.findMany({
+            where: { websiteId },
+            take: 500,
+            orderBy: { createdAt: "desc" }
+        });
+
+        res.json({
+            statusPage,
+            latestTicks
+        });
+    } catch (error: any) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to fetch status page" });
     }
 });
 
