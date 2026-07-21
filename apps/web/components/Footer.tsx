@@ -27,10 +27,10 @@ export function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-6">Resources</h3>
             <ul className="space-y-4">
-              <li><Link href="#" className="hover:text-white transition-colors">Documentation</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">API Reference</Link></li>
+              <li><Link href="https://observiq-docs.vercel.app/" target="_blank" className="hover:text-white transition-colors">Documentation</Link></li>
+              <li><Link href="https://observiq-docs.vercel.app/docs/developer/api" target="_blank" className="hover:text-white transition-colors">API Reference</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Help Center</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Integration Guides</Link></li>
+              <li><Link href="https://observiq-docs.vercel.app/docs/user/monitoring" target='_blank' className="hover:text-white transition-colors">Integration Guides</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Community Forum</Link></li>
             </ul>
           </div>

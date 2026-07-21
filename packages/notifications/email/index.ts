@@ -114,7 +114,7 @@ export async function sendEmail(notificationPayload: NotificationPayload) {
     </div>
     <div class="content">
       <p style="margin-top: 0; font-size: 16px;">Hello,</p>
-      <p style="font-size: 16px;">This is an automated notification from <strong>Better Uptime</strong> regarding your monitored service.</p>
+      <p style="font-size: 16px;">This is an automated notification from <strong>Observiq</strong> regarding your monitored service.</p>
       
       <div class="message-box">
         <p class="message-text">${notificationPayload.message}</p>
@@ -147,7 +147,7 @@ export async function sendEmail(notificationPayload: NotificationPayload) {
     </div>
     <div class="footer">
       <p style="margin-bottom: 8px;">You are receiving this email because you are subscribed to alerts for this monitor.</p>
-      <p style="margin: 0;">&copy; ${new Date().getFullYear()} Better Uptime. All rights reserved.</p>
+      <p style="margin: 0;">&copy; ${new Date().getFullYear()} Observiq. All rights reserved.</p>
     </div>
   </div>
 </body>

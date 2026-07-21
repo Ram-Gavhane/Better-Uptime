@@ -16,6 +16,7 @@ export default function Home() {
             <Link href="#services" className="text-sm font-medium opacity-60 transition-opacity hover:opacity-100">Services</Link>
             <Link href="#pricing" className="text-sm font-medium opacity-60 transition-opacity hover:opacity-100">Pricing</Link>
             <Link href="#upcoming" className="text-sm font-medium opacity-60 transition-opacity hover:opacity-100">Upcoming</Link>
+            <Link href="https://observiq-docs.vercel.app/" target="_blank" className="text-sm font-medium opacity-60 transition-opacity hover:opacity-100">Docs</Link>
              <div className="flex gap-3 items-center"><Link href="/signin" className="text-sm font-medium opacity-60 transition-opacity hover:opacity-100">
                 Sign In
               </Link>

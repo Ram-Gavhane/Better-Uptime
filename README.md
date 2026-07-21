@@ -1,4 +1,4 @@
-# Better Uptime 
+# Observiq 
 
 A full-stack, distributed website monitoring tool built with Next.js, Express, PostgreSQL, and Redis. This application allows users to monitor website uptime, track response times, and view historical "ticks" across different regions.
 
