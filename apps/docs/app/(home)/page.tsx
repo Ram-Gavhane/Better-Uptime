@@ -24,15 +24,15 @@ export default function HomePage() {
     <div className="flex flex-1 flex-col items-center px-6 py-16 gap-16">
       {/* Hero */}
       <div className="max-w-2xl text-center space-y-5">
-        <div className="inline-flex items-center gap-2 rounded-full border bg-fd-muted/60 px-4 py-1.5 text-xs font-medium text-fd-muted-foreground">
-          <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/5 px-4 py-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+          <span className="size-1.5 rounded-full bg-indigo-500 animate-pulse" />
           Observiq Documentation
         </div>
 
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
           Everything you need to
-          <span className="text-emerald-500"> monitor</span> and{' '}
-          <span className="text-sky-500">build</span>
+          <span className="text-indigo-600 dark:text-indigo-400"> monitor</span> and{' '}
+          <span className="text-indigo-600 dark:text-indigo-400">build</span>
         </h1>
 
         <p className="text-base md:text-lg text-fd-muted-foreground leading-relaxed">
@@ -101,12 +101,12 @@ type SectionCardProps = {
 function SectionCard({ icon, badge, title, description, href, links, tone }: SectionCardProps) {
   const badgeStyle =
     tone === 'user'
-      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+      ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20'
       : 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20';
 
   const arrowStyle =
     tone === 'user'
-      ? 'text-emerald-500'
+      ? 'text-indigo-500'
       : 'text-sky-500';
 
   return (
